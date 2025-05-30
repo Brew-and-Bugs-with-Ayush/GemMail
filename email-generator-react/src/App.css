@@ -1,0 +1,61 @@
+/* App.css - Component-specific styles */
+
+/* You could define a class for the main content card */
+.main-app-card {
+    /* Example: Add a subtle transition for hover effects (if any) */
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  /* Example: Hover effect for the card (Uncomment and apply className="main-app-card" to Paper) */
+  /*
+  .main-app-card:hover {
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+  }
+  */
+  
+  /* Style for the generated reply area using a class */
+  /* Apply className="generated-reply-container" to the Box surrounding the generated reply */
+  .generated-reply-container {
+    border: 1px solid #764ba2; /* Use a color from your gradient */
+    background-color: rgba(118, 75, 162, 0.05); /* Very light background tint */
+    padding: 1.5rem; /* More padding */
+    border-radius: 8px;
+    margin-top: 2rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Optional: Slightly different background on hover for the reply container */
+  /*
+  .generated-reply-container:hover {
+     background-color: rgba(118, 75, 162, 0.08);
+  }
+  */
+  
+  /* Style for the read-only text field inside the generated reply box */
+  .generated-reply-container .MuiInputBase-root.Mui-readOnly {
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly transparent white background */
+  }
+  
+  /* Example: Animation for the title icon (Apply className="title-icon" to Email icon) */
+  .title-icon {
+    animation: wave 2.5s infinite;
+  }
+  
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(15deg); }
+    75% { transform: rotate(-15deg); }
+  }
+  
+  /* Ensure links (if any added later) have a nice style */
+  a {
+    color: #667eea; /* Use a primary color from your gradient */
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+  }
