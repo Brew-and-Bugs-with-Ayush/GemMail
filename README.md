@@ -147,6 +147,7 @@ Open in IntelliJ IDEA and add your API key to:
 ```properties
 # application.properties
 gemini.api.key=your-api-key
+gemini.api.url=your-api-url
 ```
 
 Run the app:
@@ -156,6 +157,14 @@ mvn spring-boot:run
 ```
 
 Confirm backend is live at: [http://localhost:8080](http://localhost:8080)
+
+---
+
+### 🔌 Test the API (Using Postman or any API Tool)
+
+Before integrating the frontend or extension, it's a good idea to confirm that the backend API is working correctly.
+
+#### ✅ Step 1: Start the Backend Server
 
 ---
 
