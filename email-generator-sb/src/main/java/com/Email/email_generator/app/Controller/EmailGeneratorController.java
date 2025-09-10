@@ -1,6 +1,9 @@
-package com.Email.email_generator.app;
+package com.Email.email_generator.app.Controller;
 
 
+import com.Email.email_generator.app.Service.EmailGeneratorService;
+import com.Email.email_generator.app.Model.EmailRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +14,7 @@ public class EmailGeneratorController {
 
     private final EmailGeneratorService emailGeneratorService;
 
+    @Autowired
     public EmailGeneratorController(EmailGeneratorService emailGeneratorService) {
         this.emailGeneratorService = emailGeneratorService;
     }
