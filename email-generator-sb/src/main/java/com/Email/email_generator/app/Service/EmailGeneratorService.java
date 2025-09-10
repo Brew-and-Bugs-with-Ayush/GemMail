@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,11 +32,11 @@ public class EmailGeneratorService {
         String prompt = buildPrompt(emailRequest);
 
         Map<String, Object> requestBody = Map.of(
-                "contents", new Object[]{
-                        Map.of("parts", new Object[]{
+                "contents", List.of(
+                        Map.of("parts", List.of(
                                 Map.of("text", prompt)
-                        })
-                }
+                        ))
+                )
         );
 
         String uri = UriComponentsBuilder.fromUriString(geminiApiUrl)
@@ -59,26 +61,57 @@ public class EmailGeneratorService {
     private String extractResponseContent(String response) {
         try {
             JsonNode rootNode = objectMapper.readTree(response);
-            return rootNode.path("candidates")
-                    .get(0)
-                    .path("content")
-                    .path("parts")
-                    .get(0)
-                    .path("text")
-                    .asText();
+            JsonNode candidates = rootNode.path("candidates");
+
+            if (candidates.isMissingNode() || candidates.isEmpty()) {
+                return "No valid response from model.";
+            }
+
+            JsonNode content = candidates.get(0).path("content").path("parts");
+            if (content.isMissingNode() || !content.isArray() || content.isEmpty()) {
+                return "Model response structure was unexpected.";
+            }
+
+            return content.get(0).path("text").asText("Could not extract response.");
         } catch (Exception e) {
             return "Error parsing response: " + e.getMessage();
         }
     }
 
     private String buildPrompt(EmailRequest emailRequest) {
-        String tonePart = emailRequest.getTone() != null && !emailRequest.getTone().isEmpty()
-                ? "Use a " + emailRequest.getTone() + " tone. "
-                : "";
+        String toneInstruction = "";
+        if (emailRequest.getTone() != null && !emailRequest.getTone().isEmpty()) {
+            toneInstruction = String.format(
+                    """
+                    Use a **%s** tone when writing the reply:
+                    - Formal → Polite, professional, structured.
+                    - Casual → Friendly, approachable, natural.
+                    - Concise → Short, clear, direct.
+                    
+                    """,
+                    emailRequest.getTone()
+            );
+        }
 
         return String.format(
-                "Generate a professional email reply for the following email content. Please don't generate a subject line. %s\nOriginal email:\n%s",
-                tonePart,
+                """
+                You are a professional email assistant.
+                Your goal is to generate the most contextually accurate, clear, and polite reply.
+                
+                %s
+                Constraints:
+                - Do NOT create a subject line.
+                - Do NOT invent sender/receiver names unless explicitly provided.
+                - Always preserve the intent of the original email.
+                - Reply in natural email style (greeting, body, closing).
+                - Do NOT hallucinate facts.
+                - If original email is vague, politely ask for clarification instead of assuming.
+                
+                Original email:
+                ---
+                %s
+                """,
+                toneInstruction,
                 emailRequest.getEmailContent()
         );
     }
