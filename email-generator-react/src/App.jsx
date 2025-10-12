@@ -11,6 +11,11 @@ function App() {
     const [showNotification, setShowNotification] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+    const showTempNotification = () => {
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 3000);
+    };
+
     const scrollToGenerator = () => {
         const generatorSection = document.getElementById('generator');
         if (generatorSection) {
@@ -21,10 +26,7 @@ function App() {
     const handleCopy = () => {
         if (!generatedReply) return;
         navigator.clipboard.writeText(generatedReply)
-            .then(() => {
-                setShowNotification(true);
-                setTimeout(() => setShowNotification(false), 3000);
-            })
+            .then(() => showTempNotification())
             .catch(err => console.error('Failed to copy:', err));
     };
 
@@ -34,37 +36,37 @@ function App() {
         setGeneratedReply('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/email/generate', {
+            const apiBaseUrl = import.meta.env.VITE_BACKEND_API_URL;
+
+            if (!apiBaseUrl) {
+                setError('Backend URL not configured.');
+                return;
+            }
+
+            const response = await fetch(`${apiBaseUrl}/api/email/generate`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    emailContent,
-                    tone
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emailContent, tone }),
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
+                const errorText = await response.text();
+                setError(`API request failed: ${response.status} - ${errorText}`);
+                return;
             }
 
-            const data = await response.json();
-            const reply = data && typeof data === 'object'
-                ? data.reply || JSON.stringify(data)
-                : data;
-
+            const reply = await response.text();
             setGeneratedReply(reply);
-            setShowNotification(true);
-            setTimeout(() => setShowNotification(false), 3000);
+            showTempNotification();
+
         } catch (err) {
             console.error('API Error:', err);
-            const errorMessage = err.message || 'Failed to generate reply. Please check the console and ensure the backend server is running.';
-            setError(errorMessage);
+            setError(err.message || 'An unexpected error occurred.');
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
@@ -425,10 +427,10 @@ function App() {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
-                            Loved by many
+                            What People Are Saying
                         </h2>
                         <p className="text-xl text-gray-600">
-                            See what our users have to say
+                            Reviews from our Users
                         </p>
                     </div>
 
