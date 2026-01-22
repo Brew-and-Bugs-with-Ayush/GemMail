@@ -1,47 +1,17 @@
-# 🪄📧🤖 GemMail  
-![Java](https://img.shields.io/badge/Java-21-informational?logo=java&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen?logo=spring&logoColor=white)
-![Maven](https://img.shields.io/badge/Maven-3.9-blue?logo=apachemaven&logoColor=white)
-![React](https://img.shields.io/badge/React-19.0.0-blue?logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-4.6-purple?logo=vite&logoColor=FFD62E)
-![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.0-blue?logo=tailwind-css&logoColor=38B2AC)
-![Postman](https://img.shields.io/badge/Postman-API-orange?logo=postman&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-24-blue?logo=docker&logoColor=white)
-![Gemini API](https://img.shields.io/badge/Gemini-API-purple?logo=api&logoColor=white)
-![Render](https://img.shields.io/badge/Render-deployment-7F53AC?logo=render&logoColor=white)
-![Netlify](https://img.shields.io/badge/Netlify-deployment-00C7B7?logo=netlify&logoColor=white)
-
+# ✨ GemMail  
 **Your AI-Powered Email Wizard for Gmail!** 🚀  
-Craft professional, context-aware emails instantly with GemMail’s sleek Gmail extension. Say goodbye to writer’s block! 🎉
+Transform your email game with GemMail’s sleek browser extension, powered by cutting-edge AI to craft professional, context-aware emails in a snap. Say goodbye to writer’s block and hello to effortless communication! 🎉
 
 ---
 
-## ✨ What is GemMail?  
-GemMail injects a **"Generate Email"** button into Gmail. Powered by the **Gemini API**, it generates polished, personalized emails instantly—professional, friendly, or creative.
+## 🌈 What is GemMail?
+
+**GemMail** is your ultimate AI-powered email generator, designed to make email writing a breeze.  
+With a stylish browser extension, GemMail injects a magical **"Generate Email"** button into Gmail, letting you create polished, personalized emails with a single click.
+
+💡 Powered by the **Gemini API**, GemMail crafts intelligent, context-aware drafts that save time and make you shine—from professional pitches to casual notes!
 
 ---
-
-## 🎯 Key Features  
-
-- 💌 **Gmail-Integrated**: Compose smarter without leaving Gmail.  
-- 🧠 **AI-Powered**: Context-aware drafts with Gemini API.  
-- 🎨 **Customizable Tone & Style**  
-- ⚡ **Fast UI**: React + Vite frontend.  
-- 🛡️ **Secure Backend**: Java Spring Boot.  
-- 🐳 **Dockerized**: Run anywhere with containers.  
-
----
-
-## 🛠️ Tech Stack  
-
-| Layer             | Technology                                 |
-|------------------|--------------------------------------------|
-| Frontend          | React, Vite, Tailwind CSS                  |
-| Backend           | Java Spring Boot, REST API                  |
-| AI Integration    | Gemini API                                  |
-| Browser Extension | JavaScript, Manifest V3                     |
-| Dev Tools         | Docker, VS Code, IntelliJ IDEA, Git,Postman |
-| Deployment        | Netlify (frontend), Render (backend)       |
 
 ## 🎯 Awesome Features
 
@@ -51,6 +21,18 @@ GemMail injects a **"Generate Email"** button into Gmail. Powered by the **Gemin
 - 🌐 **Browser Buddy**: Works on Chrome, Firefox, and Edge.  
 - ⚡ **Lightning-Fast UI**: Built with React and Vite for buttery-smooth performance.  
 - 🛡️ **Rock-Solid Backend**: Java Spring Boot ensures secure, scalable performance.
+
+---
+
+## 🛠️ Tech Stack
+
+| Category         | Technologies                                     |
+|------------------|--------------------------------------------------|
+| **Frontend**      | React, Vite, Tailwind CSS                        |
+| **Backend**       | Java Spring Boot, Spring Security, REST API     |
+| **AI Integration**| Gemini API for smart email generation           |
+| **Extension**     | JavaScript, Manifest V3                          |
+| **Tools**         | VS Code, IntelliJ IDEA, Git                     |
 
 ---
 
@@ -71,36 +53,6 @@ GemMail injects a **"Generate Email"** button into Gmail. Powered by the **Gemin
 - 🌎 **Empowers Everyone**: Helps non-native speakers and writing newbies shine.  
 - 📈 **Scales Like a Boss**: Perfect for high-volume roles like sales and support.
 
----
-
-## 🏗️ Architecture Overview  
-
-```text
-+--------------------+        +--------------------+
-|  Gmail Browser     |        |  React Frontend    |
-|  Extension         | -----> |  (email-generator) |
-+--------------------+        +--------------------+
-            |                           |
-            |                           |
-            v                           v
-     +--------------------+      +--------------------+
-     | Gemini AI API      | <--> |  Spring Boot API   |
-     | (Email Generation) |      |  (Backend)         |
-     +--------------------+      +--------------------+
-            |
-            v
-      +-----------------+
-      |Dockerize Backend|
-      | Frontend + API  |
-      +-----------------+
-            |
-            v
-+----------------------------+
-| Deployment                 |
-| Netlify (Frontend)         |
-| Render (Backend)           |
-+----------------------------+
-```
 ---
 
 ## 🚀 Get GemMail Up and Running

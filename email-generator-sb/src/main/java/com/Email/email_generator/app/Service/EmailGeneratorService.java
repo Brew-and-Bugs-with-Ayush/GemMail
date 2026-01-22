@@ -3,11 +3,14 @@ package com.Email.email_generator.app.Service;
 import com.Email.email_generator.app.Model.EmailRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,53 +31,107 @@ public class EmailGeneratorService {
         this.objectMapper = objectMapper;
     }
 
+    @PostConstruct
+    public void init() {
+        System.out.println("API URL: " + geminiApiUrl);
+        System.out.println("API Key: " + (geminiApiKey != null && geminiApiKey.length() > 10
+                ? geminiApiKey.substring(0, 10) + "..."
+                : "INVALID OR NULL"));
+    }
+
     public String generateEmailReply(EmailRequest emailRequest) {
+        System.out.println("\n========================================");
+        System.out.println("GENERATING EMAIL REPLY");
+        System.out.println("========================================");
+
         String prompt = buildPrompt(emailRequest);
+        System.out.println("Prompt length: " + prompt.length() + " characters");
 
-        Map<String, Object> requestBody = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", prompt)
-                        ))
-                )
-        );
+        // Build request body with explicit types
+        Map<String, Object> part = new HashMap<>();
+        part.put("text", prompt);
 
-        String uri = UriComponentsBuilder.fromUriString(geminiApiUrl)
-                .queryParam("key", geminiApiKey)
-                .toUriString();
+        Map<String, Object> content = new HashMap<>();
+        content.put("parts", List.of(part));
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("contents", List.of(content));
+
+        // Build full URL
+        String fullUrl = geminiApiUrl + "?key=" + geminiApiKey;
+
+        System.out.println("Full URL: " + geminiApiUrl + "?key=***");
 
         try {
+            String jsonBody = objectMapper.writeValueAsString(requestBody);
+            System.out.println("Request JSON: " + jsonBody);
+            System.out.println("Making API call...");
+
             String response = webClient.post()
-                    .uri(uri)
+                    .uri(fullUrl)
                     .header("Content-Type", "application/json")
                     .bodyValue(requestBody)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
 
+            System.out.println("Response received!");
+            System.out.println("Response preview: " + (response != null && response.length() > 100
+                    ? response.substring(0, 100) + "..."
+                    : response));
+            System.out.println("========================================\n");
+
             return extractResponseContent(response);
+
+        } catch (WebClientResponseException e) {
+            System.err.println("========================================");
+            System.err.println("API ERROR!");
+            System.err.println("========================================");
+            System.err.println("Status Code: " + e.getStatusCode());
+            System.err.println("Status Text: " + e.getStatusText());
+            System.err.println("Response Body: " + e.getResponseBodyAsString());
+            System.err.println("========================================\n");
+
+            return "API Error [" + e.getStatusCode() + "]: " + e.getResponseBodyAsString();
+
         } catch (Exception e) {
-            return "API call failed: " + e.getMessage();
+            System.err.println("========================================");
+            System.err.println("UNEXPECTED ERROR!");
+            System.err.println("========================================");
+            e.printStackTrace();
+            System.err.println("========================================\n");
+
+            return "Unexpected error: " + e.getMessage();
         }
     }
 
     private String extractResponseContent(String response) {
         try {
             JsonNode rootNode = objectMapper.readTree(response);
+
+            System.out.println("Parsing response...");
+            System.out.println("Root node: " + rootNode.toPrettyString());
+
             JsonNode candidates = rootNode.path("candidates");
 
             if (candidates.isMissingNode() || candidates.isEmpty()) {
-                return "No valid response from model.";
+                return "No valid response from model. Full response: " + response;
             }
 
             JsonNode content = candidates.get(0).path("content").path("parts");
             if (content.isMissingNode() || !content.isArray() || content.isEmpty()) {
-                return "Model response structure was unexpected.";
+                return "Model response structure unexpected. Full response: " + response;
             }
 
-            return content.get(0).path("text").asText("Could not extract response.");
+            String extractedText = content.get(0).path("text").asText("Could not extract response.");
+            System.out.println("Extracted text length: " + extractedText.length());
+
+            return extractedText;
+
         } catch (Exception e) {
-            return "Error parsing response: " + e.getMessage();
+            System.err.println("Error parsing response: " + e.getMessage());
+            e.printStackTrace();
+            return "Error parsing response: " + e.getMessage() + ". Raw response: " + response;
         }
     }
 
